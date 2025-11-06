@@ -22,6 +22,9 @@ dependencies {
     //Rest
     implementation 'io.quarkus:quarkus-rest-jackson'
 
+    //Websocket
+    implementation("io.quarkus:quarkus-websockets-next")
+
     //Lombok
     implementation 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
