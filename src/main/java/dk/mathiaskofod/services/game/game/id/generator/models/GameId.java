@@ -1,6 +1,16 @@
 package dk.mathiaskofod.services.game.game.id.generator.models;
 
-public record GameId(String id) {
+import jakarta.validation.constraints.Pattern;
+
+public record GameId(
+        @Pattern(regexp = "^(?:[A-Za-z0-9]{3}-[A-Za-z0-9]{3}-[A-Za-z0-9]{3}|[A-Za-z0-9]{9})$", message = "Invalid game ID format")
+        String id
+) {
+
+    public GameId(String id) {
+        this.id = id.replaceAll("-", "");
+
+    }
 
     /**
      * Convert the game ID to a human-readable format (XXX-XXX-XXX)

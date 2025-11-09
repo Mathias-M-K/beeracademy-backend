@@ -1,6 +1,9 @@
 package dk.mathiaskofod.services.game;
 
 import dk.mathiaskofod.api.game.models.CreateGameRequest;
+import dk.mathiaskofod.api.game.models.PlayerDto;
+import dk.mathiaskofod.providers.exeptions.BaseException;
+import dk.mathiaskofod.services.game.exceptions.GameNotFoundException;
 import dk.mathiaskofod.services.game.game.id.generator.IdGenerator;
 import dk.mathiaskofod.services.game.game.id.generator.models.GameId;
 import dk.mathiaskofod.services.game.models.Game;
@@ -10,17 +13,18 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @ApplicationScoped
 public class GameService {
 
-    private final Map<GameId,Game> games = new HashMap<>();
+    private final Map<GameId, Game> games = new HashMap<>();
 
-    public GameId createGame(CreateGameRequest createGameRequest){
+    public GameId createGame(CreateGameRequest createGameRequest) {
         return createGame(createGameRequest.name(), createGameRequest.playerNames());
     }
 
-    public GameId createGame(String name, List<String> playerNames){
+    public GameId createGame(String name, List<String> playerNames) {
 
         List<Player> players = playerNames.stream()
                 .map(Player::create)
@@ -29,13 +33,25 @@ public class GameService {
         GameId gameId = IdGenerator.generateGameId();
 
         Game game = new Game(name, gameId, players);
-        games.put(gameId,game);
+        games.put(gameId, game);
 
         return gameId;
     }
 
-    public List<Game> getGames(){
+    public List<Game> getGames() {
         return games.values().stream().toList();
+    }
+
+    public List<Player> getPlayersInGame(GameId gameId) {
+
+        Optional<Game> gameFromId = getGames().stream()
+                .filter(game -> game.gameId().id().equals(gameId.id()))
+                .findFirst();
+
+        return gameFromId.orElseThrow(() -> new GameNotFoundException("Game with id " + gameId.humanReadableId() + " not found", 404))
+                .players().stream()
+                .toList();
+
 
     }
 

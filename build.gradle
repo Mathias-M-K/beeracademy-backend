@@ -22,6 +22,9 @@ dependencies {
     //Rest
     implementation 'io.quarkus:quarkus-rest-jackson'
 
+    //API validation
+    implementation("io.quarkus:quarkus-hibernate-validator")
+
     //Websocket
     implementation("io.quarkus:quarkus-websockets-next")
 
