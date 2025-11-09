@@ -9,7 +9,6 @@ public record GameId(
 
     public GameId(String id) {
         this.id = id.replaceAll("-", "");
-
     }
 
     /**

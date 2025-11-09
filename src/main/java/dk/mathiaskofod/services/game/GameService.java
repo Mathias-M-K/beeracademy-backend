@@ -10,10 +10,7 @@ import dk.mathiaskofod.services.game.models.Game;
 import dk.mathiaskofod.services.player.models.Player;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @ApplicationScoped
 public class GameService {
@@ -42,17 +39,11 @@ public class GameService {
         return games.values().stream().toList();
     }
 
-    public List<Player> getPlayersInGame(GameId gameId) {
-
-        Optional<Game> gameFromId = getGames().stream()
-                .filter(game -> game.gameId().id().equals(gameId.id()))
-                .findFirst();
-
-        return gameFromId.orElseThrow(() -> new GameNotFoundException("Game with id " + gameId.humanReadableId() + " not found", 404))
-                .players().stream()
-                .toList();
-
-
+    public Game getGame(GameId gameId){
+        if(games.containsKey(gameId)){
+            return games.get(gameId);
+        } else {
+            throw new GameNotFoundException(gameId.id());
+        }
     }
-
 }

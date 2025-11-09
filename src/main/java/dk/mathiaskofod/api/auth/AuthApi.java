@@ -1,25 +1,24 @@
 package dk.mathiaskofod.api.auth;
 
-import io.smallrye.jwt.build.Jwt;
+import dk.mathiaskofod.api.auth.models.Token;
+import dk.mathiaskofod.services.auth.AuthService;
+import dk.mathiaskofod.services.game.game.id.generator.models.GameId;
+import dk.mathiaskofod.services.player.models.Player;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.InternalServerErrorException;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.SecurityContext;
-import jakarta.ws.rs.ext.Provider;
-import org.eclipse.microprofile.jwt.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
-import java.time.Duration;
-import java.util.HashSet;
-import java.util.List;
-
+@Slf4j
 @Path("/auth")
 public class AuthApi {
+
+    @Inject
+    AuthService authService;
 
     @Inject
     JsonWebToken jwt;
@@ -33,24 +32,18 @@ public class AuthApi {
 
     @GET
     @Path("roles-allowed")
-    @RolesAllowed({ "User", "Admin" })
+    @RolesAllowed({"User", "Admin"})
     @Produces(MediaType.TEXT_PLAIN)
     public String playersAllowed(@Context SecurityContext securityContext) {
+        log.info("GameID claim: {}, playerId: {}", jwt.getClaim("gameId"), jwt.getClaim("playerId"));
         return getResponseString(securityContext);
     }
 
     @GET
     @Path("token")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String getToken(){
-        return Jwt.issuer("https://example.com/issuer")
-                .subject("Steffen")
-                .groups(new HashSet<>(List.of("User", "Admin")))
-                .claim(Claims.birthdate.name(), "2001-07-13")
-                .claim("gameId", 12345)
-                .claim("playerId", 67890)
-                .expiresIn(Duration.ofHours(5))
-                .sign();
+    public Token getToken(@QueryParam("game-id") String gameId) {
+        Player player = Player.create("Steffen");
+        return authService.createToken(player, new GameId("123abc123"));
     }
 
     private String getResponseString(SecurityContext ctx) {
