@@ -4,6 +4,19 @@ This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
 If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
 
+## Generating private and public keys
+openssl genrsa -out rsaPrivateKey.pem 2048
+
+```console
+openssl genrsa -out rsaPrivateKey.pem 2048
+openssl rsa -pubout -in rsaPrivateKey.pem -out publicKey.pem
+```
+```console
+openssl pkcs8 -topk8 -nocrypt -inform pem -in rsaPrivateKey.pem -outform pem -out privateKey.pem
+```
+
+Then take the publicKey and privateKey files and copy their content into resources file.
+
 ## Running the application in dev mode
 
 You can run your application in dev mode that enables live coding using:

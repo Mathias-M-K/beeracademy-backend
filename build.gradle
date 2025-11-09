@@ -25,6 +25,10 @@ dependencies {
     //API validation
     implementation("io.quarkus:quarkus-hibernate-validator")
 
+    //JSON WEB TOKEN (JWT)
+    implementation("io.quarkus:quarkus-smallrye-jwt")
+    implementation("io.quarkus:quarkus-smallrye-jwt-build")
+
     //Websocket
     implementation("io.quarkus:quarkus-websockets-next")
 
