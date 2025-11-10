@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.player.models;
+package dk.mathiaskofod.services.common.models;
 
 import lombok.Getter;
 import lombok.Setter;

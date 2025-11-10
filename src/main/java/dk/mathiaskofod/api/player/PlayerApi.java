@@ -4,7 +4,7 @@ import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.api.game.models.PlayerDto;
 import dk.mathiaskofod.services.game.GameService;
 import dk.mathiaskofod.services.game.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.player.PlayerConnectionService;
+import dk.mathiaskofod.services.player.PlayerClientConnectionService;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +24,7 @@ public class PlayerApi {
     GameService gameService;
 
     @Inject
-    PlayerConnectionService playerConnectionService;
+    PlayerClientConnectionService playerClientConnectionService;
 
     @GET
     @Operation(summary = "Get Players in Game", description = "Retrieve a list of players participating in a specific game by providing the game ID.")
@@ -34,10 +34,10 @@ public class PlayerApi {
                 .toList();
     }
 
-    @POST
+    @GET
     @Path("/{playerId}/claim")
     @Operation(summary = "Claim Player", description = "Claim a player in a specific game by providing the game ID and player ID.")
     public Token claimPlayer(@PathParam("playerId") String playerId, @QueryParam("gameId") GameId gameId) {
-        return playerConnectionService.claimPlayer(gameId,playerId);
+        return playerClientConnectionService.claimPlayer(gameId,playerId);
     }
 }

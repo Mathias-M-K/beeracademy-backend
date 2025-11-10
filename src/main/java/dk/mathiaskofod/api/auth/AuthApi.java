@@ -43,7 +43,7 @@ public class AuthApi {
     @Path("token")
     public Token getToken(@QueryParam("game-id") String gameId) {
         Player player = Player.create("Steffen");
-        return authService.createToken(player, new GameId("123abc123"));
+        return authService.createPlayerClientToken(player, new GameId("123abc123"));
     }
 
     private String getResponseString(SecurityContext ctx) {

@@ -1,11 +1,11 @@
 package dk.mathiaskofod.services.game;
 
+import dk.mathiaskofod.services.common.models.ConnectionInfo;
 import dk.mathiaskofod.services.game.exceptions.game.GameNotStartedException;
 import dk.mathiaskofod.services.game.game.id.generator.models.GameId;
 import dk.mathiaskofod.services.game.models.Card;
 import dk.mathiaskofod.services.game.models.Chug;
 import dk.mathiaskofod.services.game.models.Turn;
-import dk.mathiaskofod.services.player.PlayerConnectionService;
 import dk.mathiaskofod.services.player.models.Player;
 
 import lombok.Getter;
@@ -27,6 +27,9 @@ public class Game {
     @Getter
     private final List<Player> players;
 
+    @Getter
+    private ConnectionInfo connectionInfo;
+
     private boolean isStarted = false;
     private Instant gameStartTime;
     private int round = 1;
@@ -40,6 +43,7 @@ public class Game {
         this.name = name;
         this.gameId = gameId;
         this.players = players;
+        this.connectionInfo = new ConnectionInfo();
 
         this.currentPlayer = players.getFirst();
         this.currentPlayerIndex = 0;

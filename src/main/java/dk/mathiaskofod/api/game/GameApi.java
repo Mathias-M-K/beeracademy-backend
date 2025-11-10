@@ -3,12 +3,16 @@ package dk.mathiaskofod.api.game;
 import dk.mathiaskofod.api.game.models.CreateGameRequest;
 import dk.mathiaskofod.api.game.models.GameDto;
 import dk.mathiaskofod.api.game.models.GameIdDto;
+import dk.mathiaskofod.services.auth.models.Token;
+import dk.mathiaskofod.services.game.GameClientConnectionService;
 import dk.mathiaskofod.services.game.GameService;
 import dk.mathiaskofod.services.game.game.id.generator.models.GameId;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.reactive.ResponseStatus;
@@ -21,6 +25,9 @@ public class GameApi {
 
     @Inject
     GameService gameService;
+
+    @Inject
+    GameClientConnectionService gameClientConnectionService;
 
     @POST
     @ResponseStatus(200)
@@ -37,4 +44,11 @@ public class GameApi {
                 .map(GameDto::fromGame)
                 .toList();
     }
+
+    @GET
+    @Path("{game-id}/claim")
+    public Token claimGame(@Valid  @PathParam("game-id") GameId gameId){
+        return gameClientConnectionService.claimGame(gameId);
+    }
+
 }

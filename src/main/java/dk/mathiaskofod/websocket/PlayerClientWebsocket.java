@@ -1,20 +1,21 @@
 package dk.mathiaskofod.websocket;
 
 import dk.mathiaskofod.providers.exeptions.mappers.ExceptionResponse;
+import dk.mathiaskofod.services.auth.models.Roles;
 import dk.mathiaskofod.services.auth.models.TokenInfo;
-import dk.mathiaskofod.services.player.PlayerConnectionService;
+import dk.mathiaskofod.services.player.PlayerClientConnectionService;
 import dk.mathiaskofod.websocket.models.CustomWebsocketCodes;
-import io.quarkus.security.Authenticated;
 import io.quarkus.websockets.next.*;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 
 @Slf4j
-@Authenticated
+@RolesAllowed(Roles.PLAYER_ROLE)
 @WebSocket(path = "/player")
-public class PlayerConnectionWebsocket {
+public class PlayerClientWebsocket {
 
     @Inject
     JsonWebToken jwt;
@@ -23,7 +24,7 @@ public class PlayerConnectionWebsocket {
     WebSocketConnection connection;
 
     @Inject
-    PlayerConnectionService playerConnectionService;
+    PlayerClientConnectionService playerClientConnectionService;
 
     @OnOpen(broadcast = true)
     public void onOpen() {
@@ -31,7 +32,7 @@ public class PlayerConnectionWebsocket {
         TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
         String websocketConnId = connection.id();
 
-        playerConnectionService.registerConnection(tokenInfo, websocketConnId);
+        playerClientConnectionService.registerConnection(tokenInfo, websocketConnId);
     }
 
     @OnClose
@@ -41,14 +42,14 @@ public class PlayerConnectionWebsocket {
             return;
         }
 
-        playerConnectionService.registerDisconnect(TokenInfo.fromToken(jwt));
+        playerClientConnectionService.registerDisconnect(TokenInfo.fromToken(jwt));
     }
 
     @OnTextMessage(broadcast = true)
     public void onMessage(String message) {
         TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
         log.info("Received message from {}: {}", tokenInfo.playerName(), message);
-        playerConnectionService.relinquishPlayer(tokenInfo);
+        playerClientConnectionService.relinquishPlayer(tokenInfo);
     }
 
     @OnError

@@ -1,5 +1,6 @@
 package dk.mathiaskofod.services.player.models;
 
+import dk.mathiaskofod.services.common.models.ConnectionInfo;
 import dk.mathiaskofod.services.game.game.id.generator.IdGenerator;
 import dk.mathiaskofod.services.game.models.Stats;
 

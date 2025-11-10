@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ApplicationScoped
-public class PlayerConnectionService {
+public class PlayerClientConnectionService {
 
     @Inject
     GameService gameService;
@@ -39,7 +39,7 @@ public class PlayerConnectionService {
         player.connectionInfo().setClaimed(true);
 
         log.info("Player claimed! PlayerID:{}, GameID:{}", playerId, gameId.humanReadableId());
-        return authService.createToken(player, gameId);
+        return authService.createPlayerClientToken(player, gameId);
     }
 
     public void registerConnection(TokenInfo tokenInfo, String websocketConnId) {
