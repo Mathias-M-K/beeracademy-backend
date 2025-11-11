@@ -1,6 +1,6 @@
 package dk.mathiaskofod.websocket;
 
-import dk.mathiaskofod.providers.exeptions.mappers.ExceptionResponse;
+import dk.mathiaskofod.providers.exceptions.mappers.ExceptionResponse;
 import dk.mathiaskofod.services.auth.models.Roles;
 import dk.mathiaskofod.services.auth.models.TokenInfo;
 import dk.mathiaskofod.services.player.PlayerClientConnectionService;

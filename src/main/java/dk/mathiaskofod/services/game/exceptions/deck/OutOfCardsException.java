@@ -1,6 +1,6 @@
 package dk.mathiaskofod.services.game.exceptions.deck;
 
-import dk.mathiaskofod.providers.exeptions.BaseException;
+import dk.mathiaskofod.providers.exceptions.BaseException;
 
 public class OutOfCardsException extends BaseException {
     public OutOfCardsException() {

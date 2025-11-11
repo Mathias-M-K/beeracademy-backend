@@ -54,6 +54,7 @@ public class Game {
         this.currentPlayerIndex = 0;
         this.deck = new Deck(players.size());
 
+
         this.eventEmitter = eventEmitter;
     }
 

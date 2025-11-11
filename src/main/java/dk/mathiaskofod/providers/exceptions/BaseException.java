@@ -1,4 +1,4 @@
-package dk.mathiaskofod.providers.exeptions;
+package dk.mathiaskofod.providers.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
 

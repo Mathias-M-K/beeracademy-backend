@@ -1,6 +1,6 @@
 package dk.mathiaskofod.services.game.exceptions.deck;
 
-import dk.mathiaskofod.providers.exeptions.BaseException;
+import dk.mathiaskofod.providers.exceptions.BaseException;
 import dk.mathiaskofod.services.game.models.Suit;
 
 public class NotEnoughSuitesAvailableException extends BaseException {

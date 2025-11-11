@@ -1,6 +1,6 @@
-package dk.mathiaskofod.providers.exeptions.mappers;
+package dk.mathiaskofod.providers.exceptions.mappers;
 
-import dk.mathiaskofod.providers.exeptions.BaseException;
+import dk.mathiaskofod.providers.exceptions.BaseException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
