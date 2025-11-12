@@ -1,7 +1,8 @@
 package dk.mathiaskofod.services.game;
 
 import dk.mathiaskofod.api.game.models.CreateGameRequest;
-import dk.mathiaskofod.services.game.event.GameEventEmitter;
+import dk.mathiaskofod.domain.game.GameImpl;
+import dk.mathiaskofod.domain.game.events.GameEventEmitterImpl;
 import dk.mathiaskofod.services.game.exceptions.GameNotFoundException;
 import dk.mathiaskofod.services.game.id.generator.IdGenerator;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
@@ -21,9 +22,9 @@ public class GameService {
     PlayerClientConnectionService playerClientConnectionService;
 
     @Inject
-    GameEventEmitter gameEventEmitter;
+    GameEventEmitterImpl gameEventEmitterImpl;
 
-    private final Map<GameId, Game> games = new HashMap<>();
+    private final Map<GameId, GameImpl> games = new HashMap<>();
 
     public GameId createGame(CreateGameRequest createGameRequest) {
         return createGame(createGameRequest.name(), createGameRequest.playerNames());
@@ -37,40 +38,34 @@ public class GameService {
 
         GameId gameId = IdGenerator.generateGameId();
 
-        Game game = new Game(name, gameId, players, gameEventEmitter);
+        GameImpl game = new GameImpl(name, gameId, players, gameEventEmitterImpl);
         games.put(gameId, game);
 
         return gameId;
     }
 
-    public List<Game> getGames() {
+    public List<GameImpl> getGames() {
         return games.values().stream().toList();
     }
 
-    public Game getGame(GameId gameId){
-        if(games.containsKey(gameId)){
+    public GameImpl getGame(GameId gameId) {
+        if (games.containsKey(gameId)) {
             return games.get(gameId);
         } else {
             throw new GameNotFoundException(gameId);
         }
     }
 
-    public Player getPlayer(GameId gameId, String playerId){
+    public Player getPlayer(GameId gameId, String playerId) {
         return getGame(gameId).getPlayers().stream()
                 .filter(player -> player.id().equals(playerId))
                 .findFirst()
                 .orElseThrow(() -> new PlayerNotFoundException(playerId, gameId));
     }
 
-    public void endOfTurn(long elapsedTime, GameId gameId, String playerId){
-        Game game = getGame(gameId);
-        game.startGame();
-
-        if(!game.getCurrentPlayer().id().equals(playerId)){
-            //FIXME implement this
-            throw new NotImplementedYet();
-        }
-
-        game.endTurn(elapsedTime);
+    public void endOfTurn(long elapsedTime, GameId gameId, String playerId) {
+        GameImpl game = getGame(gameId);
+        Player player = getPlayer(gameId, playerId);
+        game.endTurnBy(player, elapsedTime);
     }
 }

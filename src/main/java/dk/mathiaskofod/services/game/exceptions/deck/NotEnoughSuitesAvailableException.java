@@ -1,11 +1,11 @@
 package dk.mathiaskofod.services.game.exceptions.deck;
 
 import dk.mathiaskofod.providers.exceptions.BaseException;
-import dk.mathiaskofod.services.game.models.Suit;
+import dk.mathiaskofod.domain.game.deck.models.Suit;
 
 public class NotEnoughSuitesAvailableException extends BaseException {
 
-    public NotEnoughSuitesAvailableException(int nrOfRequestedSuites) {
-        super(nrOfRequestedSuites + " was requested, but only " + Suit.values().length + " is available", 500);
+    publ    public NotEnoughSuitesAvailableException(int nrOfRequestedSuits) {
+        super(String.format("Requested %d suits, but only %d are available", nrOfRequestedSuits, Suit.values().length), 500);
     }
 }

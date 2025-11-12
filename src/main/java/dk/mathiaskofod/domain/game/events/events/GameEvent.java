@@ -1,9 +1,7 @@
-package dk.mathiaskofod.services.game.event.events;
+package dk.mathiaskofod.domain.game.events.events;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public interface GameEvent {
 

@@ -1,8 +1,8 @@
-package dk.mathiaskofod.services.game;
+package dk.mathiaskofod.domain.game;
 
-import dk.mathiaskofod.services.game.event.GameEventEmitter;
+import dk.mathiaskofod.domain.game.events.GameEventEmitterImpl;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.game.models.Turn;
+import dk.mathiaskofod.domain.game.models.Turn;
 import dk.mathiaskofod.services.player.models.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,13 +17,13 @@ import static org.hamcrest.Matchers.is;
 class GameTest {
 
     String gameId = "123abc123";
-    Game game;
+    GameImpl game;
 
     Player player1;
     Player player2;
     Player player3;
 
-    GameEventEmitter uselessGameEventEmitter = new GameEventEmitter();
+    GameEventEmitterImpl uselessGameEventEmitterImpl = new GameEventEmitterImpl();
 
     @BeforeEach
     void init(){
@@ -33,7 +33,7 @@ class GameTest {
         player3 = Player.create("Player3");
 
         GameId gameId = new GameId(this.gameId);
-        game = new Game("Game under test",gameId, List.of(player1,player2,player3),uselessGameEventEmitter);
+        game = new GameImpl("Game under test",gameId, List.of(player1,player2,player3), uselessGameEventEmitterImpl);
     }
 
     @Nested
@@ -52,7 +52,7 @@ class GameTest {
             Player expectedFirstPlayer = player1;
 
             //Assert
-            assertThat(game.getCurrentPlayer(), is(expectedFirstPlayer));
+            assertThat(game.currentPlayer, is(expectedFirstPlayer));
 
         }
 
@@ -65,12 +65,12 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 1; turns++){
-                game.endTurn(0);
+                game.endTurnBy(game.currentPlayer,0);
             }
 
 
             //Assert
-            assertThat(game.getCurrentPlayer(), is(expectedSecondPlayer));
+            assertThat(game.currentPlayer, is(expectedSecondPlayer));
         }
 
         @Test
@@ -82,11 +82,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 2; turns++){
-                game.endTurn(0);
+                game.endTurnBy(game.currentPlayer,0);
             }
 
             //Assert
-            assertThat(game.getCurrentPlayer(), is(expectedThirdPlayer));
+            assertThat(game.currentPlayer, is(expectedThirdPlayer));
         }
 
         @Test
@@ -98,11 +98,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 3; turns++){
-                game.endTurn(0);
+                game.endTurnBy(game.currentPlayer,0);
             }
 
             //Arrange
-            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
+            assertThat(game.currentPlayer,is(expectedForthPlayer));
         }
 
         @Test
@@ -114,11 +114,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 4; turns++){
-                game.endTurn(0);
+                game.endTurnBy(game.currentPlayer,0);
             }
 
             //Arrange
-            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
+            assertThat(game.currentPlayer,is(expectedForthPlayer));
         }
 
         @Test
@@ -130,11 +130,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 5; turns++){
-                game.endTurn(0);
+                game.endTurnBy(game.currentPlayer,0);
             }
 
             //Arrange
-            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
+            assertThat(game.currentPlayer,is(expectedForthPlayer));
         }
 
         @Test
@@ -146,21 +146,21 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 6; turns++){
-                game.endTurn(0);
+                game.endTurnBy(game.currentPlayer,0);
             }
 
             //Arrange
-            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
+            assertThat(game.currentPlayer,is(expectedForthPlayer));
         }
     }
 
     @Test
-    @DisplayName("Exception is thrown ")
+
     void test(){
         game.startGame();;
 
         for(int i = 0; i<3*13; i++){
-            game.endTurn(0);
+            game.endTurnBy(game.currentPlayer, 0);
         }
 
         for(Player p : game.getPlayers()){

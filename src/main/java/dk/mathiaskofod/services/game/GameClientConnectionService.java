@@ -1,10 +1,11 @@
 package dk.mathiaskofod.services.game;
 
+import dk.mathiaskofod.domain.game.GameImpl;
 import dk.mathiaskofod.services.auth.AuthService;
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.common.exceptions.NoConnectionIdException;
 import dk.mathiaskofod.services.common.models.ConnectionInfo;
-import dk.mathiaskofod.services.game.event.events.EndOfTurnEvent;
+import dk.mathiaskofod.domain.game.events.events.EndOfTurnEvent;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import io.quarkus.websockets.next.OpenConnections;
 import io.quarkus.websockets.next.WebSocketConnection;
@@ -29,7 +30,7 @@ public class GameClientConnectionService {
 
     public Token claimGame(GameId gameId){
 
-        Game game = gameService.getGame(gameId);
+        GameImpl game = gameService.getGame(gameId);
 
         if(game.getConnectionInfo().isClaimed()){
             //FIXME this is not done
@@ -43,7 +44,7 @@ public class GameClientConnectionService {
 
     public void registerConnection(GameId gameId, String websocketConnId){
 
-        Game game = gameService.getGame(gameId);
+        GameImpl game = gameService.getGame(gameId);
         ConnectionInfo connInfo = game.getConnectionInfo();
 
         if(!connInfo.isClaimed()){

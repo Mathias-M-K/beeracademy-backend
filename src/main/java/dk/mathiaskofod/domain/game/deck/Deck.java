@@ -1,9 +1,9 @@
-package dk.mathiaskofod.services.game;
+package dk.mathiaskofod.domain.game.deck;
 
 import dk.mathiaskofod.services.game.exceptions.deck.NotEnoughSuitesAvailableException;
 import dk.mathiaskofod.services.game.exceptions.deck.OutOfCardsException;
-import dk.mathiaskofod.services.game.models.Card;
-import dk.mathiaskofod.services.game.models.Suit;
+import dk.mathiaskofod.domain.game.deck.models.Card;
+import dk.mathiaskofod.domain.game.deck.models.Suit;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;

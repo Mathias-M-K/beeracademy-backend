@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.game.models;
+package dk.mathiaskofod.domain.game.models;
 
 import lombok.Getter;
 

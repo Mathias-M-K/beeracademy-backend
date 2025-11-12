@@ -1,8 +1,9 @@
 package dk.mathiaskofod.services.game;
 
+import dk.mathiaskofod.domain.game.deck.Deck;
 import dk.mathiaskofod.services.game.exceptions.deck.NotEnoughSuitesAvailableException;
 import dk.mathiaskofod.services.game.exceptions.deck.OutOfCardsException;
-import dk.mathiaskofod.services.game.models.Card;
+import dk.mathiaskofod.domain.game.deck.models.Card;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,9 +38,11 @@ class DeckTest {
         int nrOfSuits = 13;
 
         //Act - Assert
-        assertThrows(NotEnoughSuitesAvailableException.class, () -> {
+        NotEnoughSuitesAvailableException exception = assertThrows(NotEnoughSuitesAvailableException.class, () -> {
             new Deck(nrOfSuits);
         });
+
+        assertThat(exception.getMessage(), is("Requested 13 suits, but only 12 are available"));
     }
 
     @Test

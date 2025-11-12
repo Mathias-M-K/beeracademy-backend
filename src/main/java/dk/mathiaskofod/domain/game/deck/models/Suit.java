@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.game.models;
+package dk.mathiaskofod.domain.game.deck.models;
 
 public enum Suit {
     diamond,
