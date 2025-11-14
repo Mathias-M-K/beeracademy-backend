@@ -1,9 +1,10 @@
 package dk.mathiaskofod.domain.game;
 
-import dk.mathiaskofod.domain.game.events.GameEventEmitterImpl;
+import dk.mathiaskofod.domain.game.events.GameEventEmitter;
+import dk.mathiaskofod.domain.game.events.TestGameEventEmitter;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import dk.mathiaskofod.domain.game.models.Turn;
-import dk.mathiaskofod.services.player.models.Player;
+import dk.mathiaskofod.services.connection.player.models.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +24,7 @@ class GameTest {
     Player player2;
     Player player3;
 
-    GameEventEmitterImpl uselessGameEventEmitterImpl = new GameEventEmitterImpl();
+    GameEventEmitter emitter = new TestGameEventEmitter();
 
     @BeforeEach
     void init(){
@@ -33,7 +34,7 @@ class GameTest {
         player3 = Player.create("Player3");
 
         GameId gameId = new GameId(this.gameId);
-        game = new GameImpl("Game under test",gameId, List.of(player1,player2,player3), uselessGameEventEmitterImpl);
+        game = new GameImpl("Game under test",gameId, List.of(player1,player2,player3), emitter);
     }
 
     @Nested
@@ -52,7 +53,7 @@ class GameTest {
             Player expectedFirstPlayer = player1;
 
             //Assert
-            assertThat(game.currentPlayer, is(expectedFirstPlayer));
+            assertThat(game.getCurrentPlayer(), is(expectedFirstPlayer));
 
         }
 
@@ -65,12 +66,12 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 1; turns++){
-                game.endTurnBy(game.currentPlayer,0);
+                game.endTurnBy(game.getCurrentPlayer(),0);
             }
 
 
             //Assert
-            assertThat(game.currentPlayer, is(expectedSecondPlayer));
+            assertThat(game.getCurrentPlayer(), is(expectedSecondPlayer));
         }
 
         @Test
@@ -82,11 +83,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 2; turns++){
-                game.endTurnBy(game.currentPlayer,0);
+                game.endTurnBy(game.getCurrentPlayer(),0);
             }
 
             //Assert
-            assertThat(game.currentPlayer, is(expectedThirdPlayer));
+            assertThat(game.getCurrentPlayer(), is(expectedThirdPlayer));
         }
 
         @Test
@@ -98,11 +99,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 3; turns++){
-                game.endTurnBy(game.currentPlayer,0);
+                game.endTurnBy(game.getCurrentPlayer(),0);
             }
 
             //Arrange
-            assertThat(game.currentPlayer,is(expectedForthPlayer));
+            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
         }
 
         @Test
@@ -114,11 +115,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 4; turns++){
-                game.endTurnBy(game.currentPlayer,0);
+                game.endTurnBy(game.getCurrentPlayer(),0);
             }
 
             //Arrange
-            assertThat(game.currentPlayer,is(expectedForthPlayer));
+            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
         }
 
         @Test
@@ -130,11 +131,11 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 5; turns++){
-                game.endTurnBy(game.currentPlayer,0);
+                game.endTurnBy(game.getCurrentPlayer(),0);
             }
 
             //Arrange
-            assertThat(game.currentPlayer,is(expectedForthPlayer));
+            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
         }
 
         @Test
@@ -146,30 +147,30 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 6; turns++){
-                game.endTurnBy(game.currentPlayer,0);
+                game.endTurnBy(game.getCurrentPlayer(),0);
             }
 
             //Arrange
-            assertThat(game.currentPlayer,is(expectedForthPlayer));
+            assertThat(game.getCurrentPlayer(),is(expectedForthPlayer));
         }
     }
 
     @Test
 
     void test(){
-        game.startGame();;
+        game.startGame();
 
         for(int i = 0; i<3*13; i++){
-            game.endTurnBy(game.currentPlayer, 0);
+            game.endTurnBy(game.getCurrentPlayer(), 0);
         }
 
         for(Player p : game.getPlayers()){
-            System.out.println("");
+            System.out.println();
             System.out.println(p.name());
-            for(Turn t : p.stats().getTurns()){
-                System.out.println(t);
-            }
-        }
+             for(Turn t : p.stats().getTurns()){
+                 System.out.println(t);
+             }
+         }
     }
 
 

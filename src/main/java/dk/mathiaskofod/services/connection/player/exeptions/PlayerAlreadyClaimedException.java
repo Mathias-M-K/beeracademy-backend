@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.player.exeptions;
+package dk.mathiaskofod.services.connection.player.exeptions;
 
 import dk.mathiaskofod.providers.exceptions.BaseException;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;

@@ -1,16 +1,16 @@
-package dk.mathiaskofod.services.player;
+package dk.mathiaskofod.services.connection.player;
 
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.auth.AuthService;
 import dk.mathiaskofod.services.auth.models.TokenInfo;
-import dk.mathiaskofod.services.common.exceptions.NoConnectionIdException;
+import dk.mathiaskofod.services.connection.exceptions.NoConnectionIdException;
 import dk.mathiaskofod.services.game.GameService;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.player.exeptions.PlayerAlreadyClaimedException;
-import dk.mathiaskofod.services.player.exeptions.PlayerNotClaimedException;
-import dk.mathiaskofod.services.player.models.Player;
-import dk.mathiaskofod.services.player.models.action.PlayerAction;
-import dk.mathiaskofod.services.player.models.action.PlayerDataType;
+import dk.mathiaskofod.services.connection.player.exeptions.PlayerAlreadyClaimedException;
+import dk.mathiaskofod.services.connection.player.exeptions.PlayerNotClaimedException;
+import dk.mathiaskofod.services.connection.player.models.Player;
+import dk.mathiaskofod.services.connection.player.models.action.PlayerAction;
+import dk.mathiaskofod.services.connection.player.models.action.PlayerDataType;
 import io.quarkus.websockets.next.OpenConnections;
 import io.quarkus.websockets.next.WebSocketConnection;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -34,12 +34,10 @@ public class PlayerClientConnectionService {
     public void onPlayerAction(PlayerAction action, TokenInfo tokenInfo) {
 
         switch (action.type()) {
-            case endOfTurn -> {
-                gameService.endOfTurn(action.data().get(PlayerDataType.elapsedTime), tokenInfo.gameId(), tokenInfo.playerId());
-            }
-            case chug -> {
-                return;
-            }
+            case startGame -> gameService.startGame(tokenInfo.gameId());
+            case endOfTurn -> gameService.endOfTurn(123, tokenInfo.gameId(), tokenInfo.playerId());
+            case chug -> log.info("Player {} in game {} is chugging!", tokenInfo.playerId(), tokenInfo.gameId().humanReadableId());
+            default -> log.error("Action type not supported by PlayerClient: {}", action.type());
         }
 
     }
@@ -118,12 +116,4 @@ public class PlayerClientConnectionService {
         );
     }
 
-
-//    public void sendText(String playerName, String message){
-//        String connectionId = connectedPlayers.get(playerName).connectionInfo().getConnectionId().orElseThrow();
-//        connections.findByConnectionId(connectionId).ifPresent(conn -> {
-//            log.info("Sending message to connectionId {}: {}", connectionId, message);
-//            conn.sendTextAndAwait(message);
-//        });
-//    }
 }

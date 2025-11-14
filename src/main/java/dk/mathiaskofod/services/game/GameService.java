@@ -1,17 +1,17 @@
 package dk.mathiaskofod.services.game;
 
 import dk.mathiaskofod.api.game.models.CreateGameRequest;
+import dk.mathiaskofod.domain.game.Game;
 import dk.mathiaskofod.domain.game.GameImpl;
 import dk.mathiaskofod.domain.game.events.GameEventEmitterImpl;
 import dk.mathiaskofod.services.game.exceptions.GameNotFoundException;
 import dk.mathiaskofod.services.game.id.generator.IdGenerator;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.player.PlayerClientConnectionService;
-import dk.mathiaskofod.services.player.exeptions.PlayerNotFoundException;
-import dk.mathiaskofod.services.player.models.Player;
+import dk.mathiaskofod.services.connection.player.PlayerClientConnectionService;
+import dk.mathiaskofod.services.connection.player.exeptions.PlayerNotFoundException;
+import dk.mathiaskofod.services.connection.player.models.Player;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.jboss.resteasy.reactive.common.NotImplementedYet;
 
 import java.util.*;
 
@@ -24,7 +24,7 @@ public class GameService {
     @Inject
     GameEventEmitterImpl gameEventEmitterImpl;
 
-    private final Map<GameId, GameImpl> games = new HashMap<>();
+    private final Map<GameId, Game> games = new HashMap<>();
 
     public GameId createGame(CreateGameRequest createGameRequest) {
         return createGame(createGameRequest.name(), createGameRequest.playerNames());
@@ -44,11 +44,11 @@ public class GameService {
         return gameId;
     }
 
-    public List<GameImpl> getGames() {
+    public List<Game> getGames() {
         return games.values().stream().toList();
     }
 
-    public GameImpl getGame(GameId gameId) {
+    public Game getGame(GameId gameId) {
         if (games.containsKey(gameId)) {
             return games.get(gameId);
         } else {
@@ -64,8 +64,12 @@ public class GameService {
     }
 
     public void endOfTurn(long elapsedTime, GameId gameId, String playerId) {
-        GameImpl game = getGame(gameId);
+        Game game = getGame(gameId);
         Player player = getPlayer(gameId, playerId);
         game.endTurnBy(player, elapsedTime);
+    }
+
+    public void startGame(GameId gameId) {
+        getGame(gameId).startGame();
     }
 }

@@ -50,7 +50,7 @@ public class RestClientLogger implements ContainerRequestFilter, ContainerRespon
 
 
         int elapsedTime = timer.getResponseTime();
-        log.info("Response: {} {}, Status: {}, time: {}ms", method, uri, status, elapsedTime);
+        log.info("Response: {} {}, Status: {}, duration: {}ms", method, uri, status, elapsedTime);
 
         MDC.remove(CORRELATION_ID_HEADER);
     }

@@ -3,7 +3,7 @@ package dk.mathiaskofod.api.auth;
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.auth.AuthService;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.player.models.Player;
+import dk.mathiaskofod.services.connection.player.models.Player;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;

@@ -1,6 +1,6 @@
 package dk.mathiaskofod.api.game.models;
 
-import dk.mathiaskofod.services.player.models.Player;
+import dk.mathiaskofod.services.connection.player.models.Player;
 
 public record PlayerDto(String name, String id, boolean isConnected) {
 

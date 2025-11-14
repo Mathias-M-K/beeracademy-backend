@@ -4,7 +4,7 @@ import dk.mathiaskofod.services.auth.models.Roles;
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.auth.models.CustomJwtClaims;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.player.models.Player;
+import dk.mathiaskofod.services.connection.player.models.Player;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 
