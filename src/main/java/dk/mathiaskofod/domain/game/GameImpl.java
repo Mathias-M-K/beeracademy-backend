@@ -2,14 +2,13 @@ package dk.mathiaskofod.domain.game;
 
 import dk.mathiaskofod.domain.game.events.GameEventEmitter;
 import dk.mathiaskofod.providers.exceptions.BaseException;
-import dk.mathiaskofod.services.common.models.ConnectionInfo;
 import dk.mathiaskofod.domain.game.deck.Deck;
 import dk.mathiaskofod.domain.game.exceptions.GameNotStartedException;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import dk.mathiaskofod.domain.game.deck.models.Card;
 import dk.mathiaskofod.domain.game.models.Chug;
 import dk.mathiaskofod.domain.game.models.Turn;
-import dk.mathiaskofod.services.connection.player.models.Player;
+import dk.mathiaskofod.domain.game.player.Player;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -30,8 +29,6 @@ public class GameImpl implements Game{
     @Getter
     private final List<Player> players;
 
-    @Getter
-    private final ConnectionInfo connectionInfo;
 
     @Getter
     private Player currentPlayer;
@@ -50,7 +47,6 @@ public class GameImpl implements Game{
         this.name = name;
         this.gameId = gameId;
         this.players = players;
-        this.connectionInfo = new ConnectionInfo();
 
         this.currentPlayer = players.getFirst();
         this.currentPlayerIndex = 0;

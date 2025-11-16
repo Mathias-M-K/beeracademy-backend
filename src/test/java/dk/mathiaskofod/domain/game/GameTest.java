@@ -4,7 +4,7 @@ import dk.mathiaskofod.domain.game.events.GameEventEmitter;
 import dk.mathiaskofod.domain.game.events.TestGameEventEmitter;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import dk.mathiaskofod.domain.game.models.Turn;
-import dk.mathiaskofod.services.connection.player.models.Player;
+import dk.mathiaskofod.domain.game.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,7 +38,7 @@ class GameTest {
     }
 
     @Nested
-    class PlayerOrder{
+    class PlayerOrder {
 
         @BeforeEach
         void init(){

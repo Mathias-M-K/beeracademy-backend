@@ -1,9 +1,8 @@
 package dk.mathiaskofod.domain.game;
 
 import dk.mathiaskofod.domain.game.models.Chug;
-import dk.mathiaskofod.services.common.models.ConnectionInfo;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.connection.player.models.Player;
+import dk.mathiaskofod.domain.game.player.Player;
 
 import java.util.List;
 
@@ -43,8 +42,5 @@ public interface Game {
      * @return the list of players
      */
     List<Player> getPlayers();
-
-    ConnectionInfo getConnectionInfo();
-
 
 }

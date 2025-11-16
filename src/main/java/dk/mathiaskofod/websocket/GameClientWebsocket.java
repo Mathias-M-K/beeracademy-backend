@@ -2,7 +2,7 @@ package dk.mathiaskofod.websocket;
 
 import dk.mathiaskofod.services.auth.models.Roles;
 import dk.mathiaskofod.services.auth.models.TokenInfo;
-import dk.mathiaskofod.services.connection.game.GameClientConnectionService;
+import dk.mathiaskofod.services.session.game.GameClientSessionManager;
 import io.quarkus.websockets.next.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -22,13 +22,13 @@ public class GameClientWebsocket {
     JsonWebToken jwt;
 
     @Inject
-    GameClientConnectionService gameClientConnectionService;
+    GameClientSessionManager gameClientSessionManager;
 
     @OnOpen
     void onOpen(){
         TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
 
-        gameClientConnectionService.registerConnection(tokenInfo.gameId(), connection.id());
+        gameClientSessionManager.registerConnection(tokenInfo.gameId(), connection.id());
     }
 
     @OnClose

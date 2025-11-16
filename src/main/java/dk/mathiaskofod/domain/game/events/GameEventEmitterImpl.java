@@ -4,7 +4,7 @@ import dk.mathiaskofod.domain.game.events.events.*;
 import dk.mathiaskofod.domain.game.models.Chug;
 import dk.mathiaskofod.domain.game.models.Turn;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.connection.player.models.Player;
+import dk.mathiaskofod.domain.game.player.Player;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
@@ -30,7 +30,7 @@ public class GameEventEmitterImpl implements GameEventEmitter {
     }
 
     @Override
-    public void onEndOfTurn(Turn turn, Player previousPlayer, Player newPlayer,  Player nextPlayer, GameId gameId) {
+    public void onEndOfTurn(Turn turn, Player previousPlayer, Player newPlayer, Player nextPlayer, GameId gameId) {
         eventBus.fire(new EndOfTurnEvent(turn, previousPlayer, newPlayer, nextPlayer, gameId));
     }
 

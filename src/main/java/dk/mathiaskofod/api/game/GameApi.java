@@ -3,8 +3,10 @@ package dk.mathiaskofod.api.game;
 import dk.mathiaskofod.api.game.models.CreateGameRequest;
 import dk.mathiaskofod.api.game.models.GameDto;
 import dk.mathiaskofod.api.game.models.GameIdDto;
+import dk.mathiaskofod.api.game.models.PlayerDto;
 import dk.mathiaskofod.services.auth.models.Token;
-import dk.mathiaskofod.services.connection.game.GameClientConnectionService;
+import dk.mathiaskofod.services.lobby.LobbyService;
+import dk.mathiaskofod.services.session.game.GameClientSessionManager;
 import dk.mathiaskofod.services.game.GameService;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import jakarta.inject.Inject;
@@ -24,31 +26,36 @@ import java.util.List;
 public class GameApi {
 
     @Inject
-    GameService gameService;
+    LobbyService lobbyService;
 
-    @Inject
-    GameClientConnectionService gameClientConnectionService;
 
     @POST
     @ResponseStatus(200)
     @Operation(summary = "Create a new game", description = "Creates a new game with the provided details")
     public GameIdDto createGame(CreateGameRequest request) {
-        GameId gameId = gameService.createGame(request);
-        return GameIdDto.fromGameId(gameId);
+        return lobbyService.createGame(request);
     }
 
     @GET
-    @Operation(summary = "Get all games", description = "Retrieves a list of all games")
-    public List<GameDto> getGames() {
-        return gameService.getGames().stream()
-                .map(GameDto::fromGame)
-                .toList();
+    @Path("/{game-id}")
+    @Operation(summary = "Get game", description = "Retrieves the details of a specific game by its ID")
+    public GameDto getGame(@Valid @PathParam("game-id") GameId gameId) {
+        return lobbyService.getGame(gameId);
     }
 
     @GET
     @Path("{game-id}/claim")
-    public Token claimGame(@Valid  @PathParam("game-id") GameId gameId){
-        return gameClientConnectionService.claimGame(gameId);
+    @Operation(summary = "Claim game", description = "Claims a game session and returns an authentication token")
+    public Token claimGame(@Valid @PathParam("game-id") GameId gameId){
+        return lobbyService.claimGame(gameId);
     }
+
+    @GET
+    @Path("{game-id}/players")
+    @Operation(summary = "Get players in game", description = "Retrieves the list of players in a specific game")
+    public List<PlayerDto> getPlayersInGame(@Valid @PathParam("game-id") GameId gameId) {
+        return lobbyService.getPlayersInGame(gameId);
+    }
+
 
 }

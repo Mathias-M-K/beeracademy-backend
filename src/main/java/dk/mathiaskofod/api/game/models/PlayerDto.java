@@ -1,14 +1,21 @@
 package dk.mathiaskofod.api.game.models;
 
-import dk.mathiaskofod.services.connection.player.models.Player;
+import dk.mathiaskofod.domain.game.player.Player;
+import dk.mathiaskofod.services.session.game.models.PlayerSession;
 
-public record PlayerDto(String name, String id, boolean isConnected) {
+public record PlayerDto(String name, String id, boolean isClaimed, boolean isConnected) {
 
-    public static PlayerDto fromPlayer(Player player){
+    public static PlayerDto create(Player player){
+        return create(player, null);
+    }
+
+    public static PlayerDto create(Player player, PlayerSession playerSession){
         return new PlayerDto(
                 player.name(),
                 player.id(),
-                player.connectionInfo().isConnected()
+                playerSession != null,
+                playerSession != null && playerSession.isConnected()
+
         );
     }
 }

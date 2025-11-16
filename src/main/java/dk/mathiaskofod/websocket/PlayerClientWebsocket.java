@@ -4,8 +4,8 @@ import dk.mathiaskofod.providers.exceptions.mappers.ExceptionResponse;
 import dk.mathiaskofod.services.auth.models.Roles;
 import dk.mathiaskofod.services.auth.models.TokenInfo;
 import dk.mathiaskofod.services.game.exceptions.GameNotFoundException;
-import dk.mathiaskofod.services.connection.player.PlayerClientConnectionService;
-import dk.mathiaskofod.services.connection.player.models.action.PlayerAction;
+import dk.mathiaskofod.services.session.player.PlayerClientSessionManager;
+import dk.mathiaskofod.services.session.player.models.action.PlayerAction;
 import dk.mathiaskofod.websocket.models.CustomWebsocketCodes;
 import io.quarkus.websockets.next.*;
 import jakarta.annotation.security.RolesAllowed;
@@ -26,7 +26,7 @@ public class PlayerClientWebsocket {
     WebSocketConnection connection;
 
     @Inject
-    PlayerClientConnectionService playerClientConnectionService;
+    PlayerClientSessionManager playerClientSessionManager;
 
     @OnOpen(broadcast = true)
     public void onOpen() {
@@ -34,7 +34,7 @@ public class PlayerClientWebsocket {
         TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
         String websocketConnId = connection.id();
 
-        playerClientConnectionService.registerConnection(tokenInfo, websocketConnId);
+        playerClientSessionManager.registerConnection(tokenInfo, websocketConnId);
     }
 
     @OnClose
@@ -44,14 +44,14 @@ public class PlayerClientWebsocket {
             return;
         }
 
-        playerClientConnectionService.registerDisconnect(TokenInfo.fromToken(jwt));
+        playerClientSessionManager.registerDisconnect(TokenInfo.fromToken(jwt));
     }
 
     @OnTextMessage()
     public void onMessage(PlayerAction action) {
         TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
         log.info("Received action from {}: {}", tokenInfo.playerName(), action);
-        playerClientConnectionService.onPlayerAction(action,tokenInfo);
+        playerClientSessionManager.onPlayerAction(action,tokenInfo);
     }
 
     @OnError
