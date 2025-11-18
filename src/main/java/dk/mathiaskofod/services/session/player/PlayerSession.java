@@ -15,8 +15,4 @@ public class PlayerSession extends AbstractSession {
     public PlayerSession(String playerId) {
         this.playerId = playerId;
     }
-
-    public Optional<String> getPlayerId(){
-        return Optional.ofNullable(playerId);
-    }
 }

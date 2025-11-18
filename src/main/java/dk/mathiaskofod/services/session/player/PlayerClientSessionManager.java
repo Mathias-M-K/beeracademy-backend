@@ -5,6 +5,7 @@ import dk.mathiaskofod.services.auth.models.PlayerTokenInfo;
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.session.AbstractSessionManager;
 import dk.mathiaskofod.services.session.actions.player.client.RelinquishPlayerAction;
+import dk.mathiaskofod.services.session.envelopes.PlayerClientEventEnvelope;
 import dk.mathiaskofod.services.session.events.client.player.PlayerClientEvent;
 import dk.mathiaskofod.services.session.events.client.player.PlayerConnectedEvent;
 import dk.mathiaskofod.services.session.events.client.player.PlayerDisconnectedEvent;
@@ -20,11 +21,19 @@ import dk.mathiaskofod.services.session.player.exeptions.PlayerNotClaimedExcepti
 import dk.mathiaskofod.domain.game.player.Player;
 import dk.mathiaskofod.services.session.player.exeptions.PlayerSessionNotFoundException;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @ApplicationScoped
-public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSession, String, PlayerClientEvent> {
+public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSession, String> {
+
+    @Inject
+    Event<PlayerClientEvent> eventBus;
 
     protected String getConnectionId(String playerId) {
 
@@ -54,7 +63,9 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
                 .orElseThrow(() -> new PlayerNotClaimedException(playerId, gameId))
                 .setConnectionId(websocketConnId);
 
-        eventBus.fire(new PlayerConnectedEvent(playerId,gameId));
+        PlayerConnectedEvent event = new PlayerConnectedEvent(playerId, gameId);
+        eventBus.fire(event);
+        broadcastEventToAllPlayers(gameId, playerId, event);
         log.info("Websocket Connection: Type:New player connection, PlayerName:{}, PlayerID:{}, GameID:{}, WebsocketConnID:{}", "Unknown", playerId, gameId.humanReadableId(), websocketConnId);
     }
 
@@ -64,7 +75,9 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
                 .orElseThrow(() -> new PlayerSessionNotFoundException(playerId))
                 .clearConnectionId();
 
-        eventBus.fire(new PlayerDisconnectedEvent(playerId,gameId));
+        PlayerDisconnectedEvent event = new PlayerDisconnectedEvent(playerId, gameId);
+        eventBus.fire(event);
+        broadcastEventToAllPlayers(gameId, playerId, event);
         log.info("Player disconnected! PlayerName:{}, PlayerID:{}, GameID:{}, WebsocketConnID:{}", "Unknown", playerId, gameId.humanReadableId(), "");
     }
 
@@ -78,20 +91,36 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
         closeConnection(playerId);
         removeSession(playerId);
 
-        eventBus.fire(new PlayerRelinquishedEvent(playerId,gameId));
+        PlayerRelinquishedEvent event = new PlayerRelinquishedEvent(playerId, gameId);
+
+        eventBus.fire(event);
+        broadcastEventToAllPlayers(gameId, playerId, event);
+    }
+
+    private void broadcastEventToAllPlayers(GameId gameId, String playerId, PlayerClientEvent playerClientEvent) {
+
+        gameService.getGame(gameId).getPlayers().stream()
+                .map(Player::id)
+                .map(this::getSession)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(session -> !session.getPlayerId().equals(playerId))
+                .forEach(session -> sendMessage(session.getPlayerId(), new PlayerClientEventEnvelope(playerClientEvent)));
     }
 
     //TODO should this be another pattern?
     public void onMessageReceived(WebsocketEnvelope envelope, PlayerTokenInfo tokenInfo) {
 
-        if(!(envelope instanceof PlayerClientActionEnvelope(PlayerClientAction payload))){
+        if (!(envelope instanceof PlayerClientActionEnvelope(PlayerClientAction payload))) {
             throw new BaseException("Only player actions allowed from player clients", 400);
         }
 
         switch (payload) {
-            case EndOfTurnAction endOfTurnAction -> handleEndOfTurnAction(endOfTurnAction.duration(), tokenInfo.gameId(), tokenInfo.playerId());
-            case RelinquishPlayerAction () -> relinquishPlayer(tokenInfo.gameId(), tokenInfo.playerId());
-            default -> throw new BaseException(String.format("Action type %s not yet supported",payload.getClass().getSimpleName()), 400);
+            case EndOfTurnAction endOfTurnAction ->
+                    handleEndOfTurnAction(endOfTurnAction.duration(), tokenInfo.gameId(), tokenInfo.playerId());
+            case RelinquishPlayerAction() -> relinquishPlayer(tokenInfo.gameId(), tokenInfo.playerId());
+            default ->
+                    throw new BaseException(String.format("Action type %s not yet supported", payload.getClass().getSimpleName()), 400);
         }
     }
 

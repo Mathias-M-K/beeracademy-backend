@@ -37,9 +37,7 @@ class DeckTest {
         int nrOfSuits = 13;
 
         //Act - Assert
-        NotEnoughSuitesAvailableException exception = assertThrows(NotEnoughSuitesAvailableException.class, () -> {
-            new Deck(nrOfSuits);
-        });
+        NotEnoughSuitesAvailableException exception = assertThrows(NotEnoughSuitesAvailableException.class, () -> new Deck(nrOfSuits));
 
         assertThat(exception.getMessage(), is("Requested 13 suits, but only 12 are available"));
     }

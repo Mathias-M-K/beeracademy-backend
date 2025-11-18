@@ -17,10 +17,4 @@ public class GameSession extends AbstractSession {
         this.gameId = gameId;
     }
 
-    public Optional<GameId> getGameId(){
-        return Optional.ofNullable(gameId);
-    }
-
-
-
 }

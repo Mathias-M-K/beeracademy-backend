@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @ApplicationScoped
-public class GameClientSessionManager extends AbstractSessionManager<GameSession, GameId, GameClientEvent> {
+public class GameClientSessionManager extends AbstractSessionManager<GameSession, GameId> {
 
 
     @Override
