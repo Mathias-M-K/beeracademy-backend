@@ -9,7 +9,6 @@ import dk.mathiaskofod.services.session.exceptions.NoConnectionIdException;
 import dk.mathiaskofod.domain.game.models.GameId;
 
 import dk.mathiaskofod.services.session.events.game.dto.exceptions.GameSessionNotFoundException;
-import dk.mathiaskofod.services.session.models.events.game.*;
 import dk.mathiaskofod.services.session.wrapper.GameEventEnvelope;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
