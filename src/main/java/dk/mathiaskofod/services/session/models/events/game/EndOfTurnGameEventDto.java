@@ -1,8 +1,8 @@
 package dk.mathiaskofod.services.session.models.events.game;
 
 import dk.mathiaskofod.domain.game.deck.models.Card;
-import dk.mathiaskofod.domain.game.events.events.EndOfTurnEvent;
-import dk.mathiaskofod.services.session.annotations.EventType;
+import dk.mathiaskofod.domain.game.events.EndOfTurnEvent;
+import dk.mathiaskofod.services.session.models.annotations.EventType;
 
 @EventType("END_OF_TURN")
 public record EndOfTurnGameEventDto(int turn, long durationInMillis, Card newCard, String previousPlayerId, String newPlayerId, String nextPlayerId) implements GameEventDto {

@@ -1,4 +1,4 @@
-package dk.mathiaskofod.domain.game.events;
+package dk.mathiaskofod.domain.game.events.emitter;
 
 import dk.mathiaskofod.domain.game.models.Chug;
 import dk.mathiaskofod.domain.game.models.Turn;

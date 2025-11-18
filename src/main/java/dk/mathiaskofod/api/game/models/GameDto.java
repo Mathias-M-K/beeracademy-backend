@@ -1,11 +1,9 @@
 package dk.mathiaskofod.api.game.models;
 
 import dk.mathiaskofod.domain.game.Game;
-import dk.mathiaskofod.domain.game.GameImpl;
-import dk.mathiaskofod.services.session.game.models.GameSession;
+import dk.mathiaskofod.services.session.game.GameSession;
 
 import java.util.List;
-import java.util.Optional;
 
 public record GameDto(String name, String id, boolean isClaimed, boolean isConnected,  List<PlayerDto> players) {
 

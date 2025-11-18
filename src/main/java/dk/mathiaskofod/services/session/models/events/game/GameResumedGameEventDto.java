@@ -1,8 +1,8 @@
 package dk.mathiaskofod.services.session.models.events.game;
 
-import dk.mathiaskofod.domain.game.events.events.ResumeGameEvent;
+import dk.mathiaskofod.domain.game.events.ResumeGameEvent;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.session.annotations.EventType;
+import dk.mathiaskofod.services.session.models.annotations.EventType;
 
 @EventType("GAME_RESUMED")
 public record GameResumedGameEventDto(GameId gameId) implements GameEventDto {

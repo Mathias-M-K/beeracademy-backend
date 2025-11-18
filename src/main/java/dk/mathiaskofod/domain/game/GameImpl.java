@@ -1,7 +1,6 @@
 package dk.mathiaskofod.domain.game;
 
-import dk.mathiaskofod.domain.game.events.GameEventEmitter;
-import dk.mathiaskofod.providers.exceptions.BaseException;
+import dk.mathiaskofod.domain.game.events.emitter.GameEventEmitter;
 import dk.mathiaskofod.domain.game.deck.Deck;
 import dk.mathiaskofod.domain.game.exceptions.GameNotStartedException;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
@@ -28,7 +27,6 @@ public class GameImpl implements Game{
 
     @Getter
     private final List<Player> players;
-
 
     @Getter
     private Player currentPlayer;
@@ -79,24 +77,19 @@ public class GameImpl implements Game{
         return Duration.between(gameStartTime, Instant.now());
     }
 
-    public void endTurnBy(Player player, long clientDurationMillis){
-        endTurnBy(player, clientDurationMillis,null);
+    public void endTurn(long clientDurationMillis){
+        endTurn(clientDurationMillis,null);
     }
 
-    public void endTurnBy(Player player, long clientDurationMillis, Chug chug) {
+    public void endTurn(long clientDurationMillis, Chug chug) {
 
         if (!isStarted) {
             throw new GameNotStartedException(gameId);
         }
 
-        if(player != currentPlayer){
-            //FIXME better exception
-            throw new BaseException("Not correct player",500);
-        }
-
         if(chug != null){
             currentPlayer.stats().addChug(chug);
-            eventEmitter.onNewChug(chug, player, gameId);
+            eventEmitter.onNewChug(chug, currentPlayer, gameId);
         }
 
         //TODO research this. Like what do we do with duration and sync
@@ -110,10 +103,13 @@ public class GameImpl implements Game{
         Turn endedTurn = new Turn(round, drawCard(), playerTime);
         currentPlayer.stats().addTurn(endedTurn);
 
+        Player previousPlayer = currentPlayer;
         currentPlayer = getNextPlayer();
+        Player nextPlayer = peakNextPlayer();
+
         currentPlayerStartTime = Instant.now();
 
-        eventEmitter.onEndOfTurn(endedTurn, player, currentPlayer, peakNextPlayer(), gameId);
+        eventEmitter.onEndOfTurn(endedTurn, previousPlayer, currentPlayer, nextPlayer, gameId);
     }
 
     private Player getNextPlayer() {

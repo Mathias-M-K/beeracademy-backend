@@ -1,7 +1,7 @@
 package dk.mathiaskofod.domain.game.deck;
 
-import dk.mathiaskofod.services.game.exceptions.deck.NotEnoughSuitesAvailableException;
-import dk.mathiaskofod.services.game.exceptions.deck.OutOfCardsException;
+import dk.mathiaskofod.domain.game.deck.exceptions.NotEnoughSuitesAvailableException;
+import dk.mathiaskofod.domain.game.deck.exceptions.OutOfCardsException;
 import dk.mathiaskofod.domain.game.deck.models.Card;
 import dk.mathiaskofod.domain.game.deck.models.Suit;
 

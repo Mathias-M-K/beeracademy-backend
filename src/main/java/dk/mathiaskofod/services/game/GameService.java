@@ -1,14 +1,13 @@
 package dk.mathiaskofod.services.game;
 
-import dk.mathiaskofod.api.game.models.CreateGameRequest;
 import dk.mathiaskofod.domain.game.Game;
 import dk.mathiaskofod.domain.game.GameImpl;
-import dk.mathiaskofod.domain.game.events.GameEventEmitterImpl;
+import dk.mathiaskofod.domain.game.events.emitter.GameEventEmitterImpl;
 import dk.mathiaskofod.services.game.exceptions.GameNotFoundException;
 import dk.mathiaskofod.services.game.id.generator.IdGenerator;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import dk.mathiaskofod.services.session.player.PlayerClientSessionManager;
-import dk.mathiaskofod.services.session.player.exeptions.PlayerNotFoundException;
+import dk.mathiaskofod.services.game.exceptions.PlayerNotFoundException;
 import dk.mathiaskofod.domain.game.player.Player;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -55,10 +54,13 @@ public class GameService {
                 .orElseThrow(() -> new PlayerNotFoundException(playerId, gameId));
     }
 
+    public Player getCurrentPlayer(GameId gameId) {
+        return getGame(gameId).getCurrentPlayer();
+    }
+
     public void endOfTurn(long elapsedTime, GameId gameId, String playerId) {
         Game game = getGame(gameId);
-        Player player = getPlayer(gameId, playerId);
-        game.endTurnBy(player, elapsedTime);
+        game.endTurn(elapsedTime);
     }
 
     public void startGame(GameId gameId) {

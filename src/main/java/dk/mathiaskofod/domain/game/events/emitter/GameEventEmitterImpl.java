@@ -1,6 +1,6 @@
-package dk.mathiaskofod.domain.game.events;
+package dk.mathiaskofod.domain.game.events.emitter;
 
-import dk.mathiaskofod.domain.game.events.events.*;
+import dk.mathiaskofod.domain.game.events.*;
 import dk.mathiaskofod.domain.game.models.Chug;
 import dk.mathiaskofod.domain.game.models.Turn;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;

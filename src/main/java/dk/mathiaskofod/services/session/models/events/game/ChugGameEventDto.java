@@ -1,9 +1,9 @@
 package dk.mathiaskofod.services.session.models.events.game;
 
 import dk.mathiaskofod.domain.game.deck.models.Suit;
-import dk.mathiaskofod.domain.game.events.events.ChugEvent;
+import dk.mathiaskofod.domain.game.events.ChugEvent;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.session.annotations.EventType;
+import dk.mathiaskofod.services.session.models.annotations.EventType;
 
 @EventType("CHUG")
 public record ChugGameEventDto(Suit suit, long timeInMillis, String playerId, GameId gameId) implements GameEventDto {

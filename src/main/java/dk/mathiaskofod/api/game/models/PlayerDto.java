@@ -1,7 +1,7 @@
 package dk.mathiaskofod.api.game.models;
 
 import dk.mathiaskofod.domain.game.player.Player;
-import dk.mathiaskofod.services.session.player.models.PlayerSession;
+import dk.mathiaskofod.services.session.player.PlayerSession;
 
 public record PlayerDto(String name, String id, boolean isClaimed, boolean isConnected) {
 

@@ -1,9 +1,8 @@
 package dk.mathiaskofod.domain.game;
 
-import dk.mathiaskofod.domain.game.events.GameEventEmitter;
+import dk.mathiaskofod.domain.game.events.emitter.GameEventEmitter;
 import dk.mathiaskofod.domain.game.events.TestGameEventEmitter;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.domain.game.models.Turn;
 import dk.mathiaskofod.domain.game.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +65,7 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 1; turns++){
-                game.endTurnBy(game.getCurrentPlayer(),0);
+                game.endTurn(0);
             }
 
 
@@ -83,7 +82,7 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 2; turns++){
-                game.endTurnBy(game.getCurrentPlayer(),0);
+                game.endTurn(0);
             }
 
             //Assert
@@ -99,7 +98,7 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 3; turns++){
-                game.endTurnBy(game.getCurrentPlayer(),0);
+                game.endTurn(0);
             }
 
             //Arrange
@@ -115,7 +114,7 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 4; turns++){
-                game.endTurnBy(game.getCurrentPlayer(),0);
+                game.endTurn(0);
             }
 
             //Arrange
@@ -131,7 +130,7 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 5; turns++){
-                game.endTurnBy(game.getCurrentPlayer(),0);
+                game.endTurn(0);
             }
 
             //Arrange
@@ -147,7 +146,7 @@ class GameTest {
 
             //Act
             for(int turns = 0; turns < 6; turns++){
-                game.endTurnBy(game.getCurrentPlayer(),0);
+                game.endTurn(0);
             }
 
             //Arrange
@@ -155,23 +154,6 @@ class GameTest {
         }
     }
 
-    @Test
-
-    void test(){
-        game.startGame();
-
-        for(int i = 0; i<3*13; i++){
-            game.endTurnBy(game.getCurrentPlayer(), 0);
-        }
-
-        for(Player p : game.getPlayers()){
-            System.out.println();
-            System.out.println(p.name());
-             for(Turn t : p.stats().getTurns()){
-                 System.out.println(t);
-             }
-         }
-    }
 
 
 }

@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.session.annotations;
+package dk.mathiaskofod.services.session.models.annotations;
 
 
 import io.quarkus.runtime.annotations.RegisterForReflection;
@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @RegisterForReflection
-public @interface EventCategory {
+public @interface ActionType {
     String value();
 }

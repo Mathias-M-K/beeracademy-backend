@@ -1,7 +1,6 @@
 package dk.mathiaskofod.services.session.game;
 
-import dk.mathiaskofod.domain.game.events.events.*;
-import dk.mathiaskofod.domain.game.events.events.ResumeGameEvent;
+import dk.mathiaskofod.domain.game.events.*;
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.session.AbstractSessionManager;
 import dk.mathiaskofod.services.session.game.exceptions.GameAlreadyClaimedException;
@@ -10,7 +9,6 @@ import dk.mathiaskofod.services.session.exceptions.NoConnectionIdException;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 
 import dk.mathiaskofod.services.session.game.exceptions.GameSessionNotFoundException;
-import dk.mathiaskofod.services.session.game.models.GameSession;
 import dk.mathiaskofod.services.session.models.events.game.*;
 import dk.mathiaskofod.services.session.models.wrapper.GameEventEnvelope;
 import jakarta.enterprise.context.ApplicationScoped;

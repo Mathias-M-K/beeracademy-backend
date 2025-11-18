@@ -2,8 +2,9 @@ package dk.mathiaskofod.providers.reflections;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
-import dk.mathiaskofod.services.session.annotations.EventCategory;
-import dk.mathiaskofod.services.session.annotations.EventType;
+import dk.mathiaskofod.services.session.models.annotations.ActionType;
+import dk.mathiaskofod.services.session.models.annotations.Category;
+import dk.mathiaskofod.services.session.models.annotations.EventType;
 import io.quarkus.jackson.ObjectMapperCustomizer;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -27,16 +28,14 @@ public class PolymorphicCustomizer implements ObjectMapperCustomizer {
     @Override
     public void customize(ObjectMapper objectMapper) {
 
-        log.info("Here we go again...");
-
         Reflections reflections = new Reflections(BASE_PACKAGE_TO_SCAN);
 
-
-        Set<Class<?>> eventCategorySubtypes = reflections.getTypesAnnotatedWith(EventCategory.class);
+        Set<Class<?>> eventCategorySubtypes = reflections.getTypesAnnotatedWith(Category.class);
         Set<Class<?>> eventTypeSubtypes = reflections.getTypesAnnotatedWith(EventType.class);
+        Set<Class<?>> actionTypeSubtypes = reflections.getTypesAnnotatedWith(ActionType.class);
 
         for (Class<?> subType : eventCategorySubtypes) {
-            EventCategory annotation = subType.getAnnotation(EventCategory.class);
+            Category annotation = subType.getAnnotation(Category.class);
             if (annotation != null) {
                 String typeName = annotation.value();
                 objectMapper.registerSubtypes(new NamedType(subType, typeName));
@@ -45,6 +44,14 @@ public class PolymorphicCustomizer implements ObjectMapperCustomizer {
 
         for (Class<?> subType : eventTypeSubtypes) {
             EventType annotation = subType.getAnnotation(EventType.class);
+            if (annotation != null) {
+                String typeName = annotation.value();
+                objectMapper.registerSubtypes(new NamedType(subType, typeName));
+            }
+        }
+
+        for (Class<?> subType : actionTypeSubtypes) {
+            ActionType annotation = subType.getAnnotation(ActionType.class);
             if (annotation != null) {
                 String typeName = annotation.value();
                 objectMapper.registerSubtypes(new NamedType(subType, typeName));

@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.session.game.models;
+package dk.mathiaskofod.services.session.game;
 
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 import dk.mathiaskofod.services.session.models.AbstractSession;

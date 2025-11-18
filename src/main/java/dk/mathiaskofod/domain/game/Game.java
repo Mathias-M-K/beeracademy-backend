@@ -24,18 +24,16 @@ public interface Game {
 
     /**
      * Ends the current turn for a specific player and starts the next player's turn
-     * @param player the player whose turn is ending
      * @param duration the duration of the turn in milliseconds
      */
-    void endTurnBy(Player player, long duration);
+    void endTurn(long duration);
 
     /**
      * Ends the current turn for a specific player with a chug and starts the next player's turn
-     * @param player the player whose turn is ending
      * @param duration the duration of the turn in milliseconds
      * @param chug the chug by the player
      */
-    void endTurnBy(Player player, long duration, Chug chug);
+    void endTurn(long duration, Chug chug);
 
     /**
      * Gets the list of players in the game
@@ -43,4 +41,9 @@ public interface Game {
      */
     List<Player> getPlayers();
 
+    /**
+     * Gets the current player whose turn it is
+     * @return the current player
+     */
+    Player getCurrentPlayer();
 }

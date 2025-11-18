@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.session.annotations;
+package dk.mathiaskofod.services.session.models.annotations;
 
 
 import io.quarkus.runtime.annotations.RegisterForReflection;

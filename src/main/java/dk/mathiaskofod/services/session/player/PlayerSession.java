@@ -1,4 +1,4 @@
-package dk.mathiaskofod.services.session.player.models;
+package dk.mathiaskofod.services.session.player;
 
 import dk.mathiaskofod.services.session.models.AbstractSession;
 import lombok.Getter;

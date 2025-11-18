@@ -1,15 +1,20 @@
 package dk.mathiaskofod.services.session.player;
 
+import dk.mathiaskofod.providers.exceptions.BaseException;
+import dk.mathiaskofod.services.auth.models.PlayerTokenInfo;
 import dk.mathiaskofod.services.auth.models.Token;
 import dk.mathiaskofod.services.session.AbstractSessionManager;
 import dk.mathiaskofod.services.session.exceptions.NoConnectionIdException;
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
-import dk.mathiaskofod.services.session.player.models.PlayerSession;
+import dk.mathiaskofod.services.session.models.actions.player.client.GameStartAction;
+import dk.mathiaskofod.services.session.models.actions.player.client.PlayerClientAction;
+import dk.mathiaskofod.services.session.models.actions.shared.EndOfTurnAction;
+import dk.mathiaskofod.services.session.models.wrapper.PlayerClientActionEnvelope;
+import dk.mathiaskofod.services.session.models.wrapper.WebsocketEnvelope;
 import dk.mathiaskofod.services.session.player.exeptions.PlayerAlreadyClaimedException;
 import dk.mathiaskofod.services.session.player.exeptions.PlayerNotClaimedException;
 import dk.mathiaskofod.domain.game.player.Player;
 import dk.mathiaskofod.services.session.player.exeptions.PlayerSessionNotFoundException;
-import dk.mathiaskofod.services.session.player.models.action.PlayerAction;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,15 +80,27 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
 
 
     //TODO should this be another pattern?
-    public void onPlayerAction(PlayerAction action, GameId gameId, String playerId) {
+    public void onMessageReceived(WebsocketEnvelope envelope, PlayerTokenInfo tokenInfo) {
 
-        switch (action.type()) {
-            case startGame -> gameService.startGame(gameId);
-            case endOfTurn -> gameService.endOfTurn(123, gameId, playerId);
-            case chug -> log.info("Player {} in game {} is chugging!", playerId, gameId.humanReadableId());
-            default -> log.error("Action type not supported by PlayerClient: {}", action.type());
+        PlayerClientAction action = switch (envelope) {
+            case PlayerClientActionEnvelope playerActionEnvelope -> playerActionEnvelope.payload();
+            default -> throw new BaseException("Only player actions allowed from player clients", 400);
+        };
+
+        switch (action) {
+            case EndOfTurnAction endOfTurnAction -> handleEndOfTurnAction(endOfTurnAction.duration(), tokenInfo.gameId(), tokenInfo.playerId());
+            case GameStartAction () -> gameService.startGame(tokenInfo.gameId());
+            default -> throw new BaseException(String.format("Action type %s not yet supported",action.getClass().getSimpleName()), 400);
         }
+    }
 
+    private void handleEndOfTurnAction(long durationInMillis, GameId gameId, String playerId) {
+
+        String currentPlayerId = gameService.getCurrentPlayer(gameId).id();
+        if (!playerId.equals(currentPlayerId)) {
+            throw new BaseException("It's not your turn!", 400); //FIXME custom exception
+        }
+        gameService.endOfTurn(durationInMillis, gameId, playerId);
     }
 
 }

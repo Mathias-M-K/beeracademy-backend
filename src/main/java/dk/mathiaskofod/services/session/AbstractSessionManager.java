@@ -23,7 +23,7 @@ public abstract class AbstractSessionManager<TSession, Tid> {
     protected AuthService authService;
 
     @Inject
-    private OpenConnections connections;
+    OpenConnections connections;
 
     public Optional<TSession> getSession(Tid id){
         return Optional.ofNullable(sessions.get(id));

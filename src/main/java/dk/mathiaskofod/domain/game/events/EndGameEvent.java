@@ -1,4 +1,4 @@
-package dk.mathiaskofod.domain.game.events.events;
+package dk.mathiaskofod.domain.game.events;
 
 import dk.mathiaskofod.services.game.id.generator.models.GameId;
 

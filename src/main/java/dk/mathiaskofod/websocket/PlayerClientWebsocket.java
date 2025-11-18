@@ -2,10 +2,10 @@ package dk.mathiaskofod.websocket;
 
 import dk.mathiaskofod.providers.exceptions.mappers.ExceptionResponse;
 import dk.mathiaskofod.services.auth.models.Roles;
-import dk.mathiaskofod.services.auth.models.TokenInfo;
+import dk.mathiaskofod.services.auth.models.PlayerTokenInfo;
 import dk.mathiaskofod.services.game.exceptions.GameNotFoundException;
+import dk.mathiaskofod.services.session.models.wrapper.WebsocketEnvelope;
 import dk.mathiaskofod.services.session.player.PlayerClientSessionManager;
-import dk.mathiaskofod.services.session.player.models.action.PlayerAction;
 import dk.mathiaskofod.websocket.models.CustomWebsocketCodes;
 import io.quarkus.websockets.next.*;
 import jakarta.annotation.security.RolesAllowed;
@@ -31,7 +31,7 @@ public class PlayerClientWebsocket {
     @OnOpen(broadcast = true)
     public void onOpen() {
 
-        TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
+        PlayerTokenInfo tokenInfo = PlayerTokenInfo.fromToken(jwt);
         String websocketConnId = connection.id();
 
         playerClientSessionManager.registerConnection(tokenInfo.gameId(),tokenInfo.playerId(), websocketConnId);
@@ -44,15 +44,15 @@ public class PlayerClientWebsocket {
             return;
         }
 
-        TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
+        PlayerTokenInfo tokenInfo = PlayerTokenInfo.fromToken(jwt);
         playerClientSessionManager.registerDisconnect(tokenInfo.gameId(),tokenInfo.playerId());
     }
 
     @OnTextMessage()
-    public void onMessage(PlayerAction action) {
-        TokenInfo tokenInfo = TokenInfo.fromToken(jwt);
-        log.info("Received action from {}: {}", tokenInfo.playerName(), action);
-        playerClientSessionManager.onPlayerAction(action,tokenInfo.gameId(), tokenInfo.playerId());
+    public void onMessage(WebsocketEnvelope websocketEnvelope) {
+        log.info("Received message from connection {}: {}", connection.id(), websocketEnvelope);
+        PlayerTokenInfo tokenInfo = PlayerTokenInfo.fromToken(jwt);
+        playerClientSessionManager.onMessageReceived(websocketEnvelope, tokenInfo);
     }
 
     @OnError
