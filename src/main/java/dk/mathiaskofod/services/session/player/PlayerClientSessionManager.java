@@ -25,7 +25,6 @@ import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -41,6 +40,21 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
                 .orElseThrow(() -> new PlayerSessionNotFoundException(playerId))
                 .getConnectionId()
                 .orElseThrow(() -> new NoConnectionIdException(playerId));
+    }
+
+    private void broadcastPlayerEvent(PlayerClientEvent event){
+        eventBus.fire(event);
+    }
+
+    private void relayPlayerEventToAllPlayers(GameId gameId, String playerId, PlayerClientEvent playerClientEvent) {
+
+        gameService.getGame(gameId).getPlayers().stream()
+                .map(Player::id)
+                .map(this::getSession)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter(session -> !session.getPlayerId().equals(playerId))
+                .forEach(session -> sendMessage(session.getPlayerId(), new PlayerClientEventEnvelope(playerClientEvent)));
     }
 
     public Token claimPlayer(GameId gameId, String playerId) {
@@ -64,8 +78,9 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
                 .setConnectionId(websocketConnId);
 
         PlayerConnectedEvent event = new PlayerConnectedEvent(playerId, gameId);
-        eventBus.fire(event);
-        broadcastEventToAllPlayers(gameId, playerId, event);
+        broadcastPlayerEvent(event);
+        relayPlayerEventToAllPlayers(gameId, playerId, event);
+
         log.info("Websocket Connection: Type:New player connection, PlayerName:{}, PlayerID:{}, GameID:{}, WebsocketConnID:{}", "Unknown", playerId, gameId.humanReadableId(), websocketConnId);
     }
 
@@ -76,8 +91,9 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
                 .clearConnectionId();
 
         PlayerDisconnectedEvent event = new PlayerDisconnectedEvent(playerId, gameId);
-        eventBus.fire(event);
-        broadcastEventToAllPlayers(gameId, playerId, event);
+        broadcastPlayerEvent(event);
+        relayPlayerEventToAllPlayers(gameId, playerId, event);
+
         log.info("Player disconnected! PlayerName:{}, PlayerID:{}, GameID:{}, WebsocketConnID:{}", "Unknown", playerId, gameId.humanReadableId(), "");
     }
 
@@ -94,18 +110,7 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
         PlayerRelinquishedEvent event = new PlayerRelinquishedEvent(playerId, gameId);
 
         eventBus.fire(event);
-        broadcastEventToAllPlayers(gameId, playerId, event);
-    }
-
-    private void broadcastEventToAllPlayers(GameId gameId, String playerId, PlayerClientEvent playerClientEvent) {
-
-        gameService.getGame(gameId).getPlayers().stream()
-                .map(Player::id)
-                .map(this::getSession)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .filter(session -> !session.getPlayerId().equals(playerId))
-                .forEach(session -> sendMessage(session.getPlayerId(), new PlayerClientEventEnvelope(playerClientEvent)));
+        relayPlayerEventToAllPlayers(gameId, playerId, event);
     }
 
     //TODO should this be another pattern?
@@ -116,11 +121,9 @@ public class PlayerClientSessionManager extends AbstractSessionManager<PlayerSes
         }
 
         switch (payload) {
-            case EndOfTurnAction endOfTurnAction ->
-                    handleEndOfTurnAction(endOfTurnAction.duration(), tokenInfo.gameId(), tokenInfo.playerId());
+            case EndOfTurnAction endOfTurnAction -> handleEndOfTurnAction(endOfTurnAction.duration(), tokenInfo.gameId(), tokenInfo.playerId());
             case RelinquishPlayerAction() -> relinquishPlayer(tokenInfo.gameId(), tokenInfo.playerId());
-            default ->
-                    throw new BaseException(String.format("Action type %s not yet supported", payload.getClass().getSimpleName()), 400);
+            default -> throw new BaseException(String.format("Action type %s not yet supported", payload.getClass().getSimpleName()), 400);
         }
     }
 
